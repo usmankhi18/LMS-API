@@ -13,14 +13,14 @@ namespace LMS_API.Controllers
         }
 
         [HttpGet("GetAllBooks")]
-        public IActionResult GetALlBooks()
+        public IActionResult GetAllBooks()
         {
             var books = library.GetAllBooks();
             var booksToSend = books.Select(book => new
             {
                 book.Id,
                 book.Title,
-                book.Category.Category,
+                book.Category.CategoryName,
                 book.Category.SubCategory,
                 book.Price,
                 Available = !book.Ordered,

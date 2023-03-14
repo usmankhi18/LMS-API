@@ -20,6 +20,6 @@ namespace LMS_API.DataAccess
         IList<BookCategory> GetAllCategories();
         void InsertNewBook(Book book);
         bool DeleteBook(int bookId);
-        void CreateCategory(BookCategory bookCategory);
+        void CreateCategory(Category category);
     }
 }

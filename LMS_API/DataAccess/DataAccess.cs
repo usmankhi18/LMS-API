@@ -78,7 +78,7 @@ namespace LMS_API.DataAccess
 
                 foreach (var book in books)
                 {
-                    sql = "select * from BookCategories where IsActive = 1 and IsDeleted=0 and Id=" + book.CategoryId;
+                    sql = "select * from SubCategories s inner join Categories c on c.Id = s.CategoryId where c.IsActive = 1 and c.IsDeleted=0 and s.IsActive = 1 and s.IsDeleted=0  and s.Id=" + book.SubCategoryId;
                     book.Category = connection.QuerySingle<BookCategory>(sql);
                 }
             }
@@ -221,7 +221,7 @@ namespace LMS_API.DataAccess
 
             using (var connection = new SqlConnection(DbConnection))
             {
-                categories = connection.Query<BookCategory>("select * from BookCategories;");
+                categories = connection.Query<BookCategory>("select * from SubCategories s inner join Categories c on c.Id = s.CategoryId where c.IsActive = 1 and c.IsDeleted=0 and s.IsActive = 1 and s.IsDeleted=0;");
             }
 
             return categories.ToList();
@@ -233,7 +233,7 @@ namespace LMS_API.DataAccess
             var sql = "select Id from BookCategories where Category=@cat and SubCategory=@subcat";
             var parameter1 = new
             {
-                cat = book.Category.Category,
+                cat = book.Category.CategoryName,
                 subcat = book.Category.SubCategory
             };
             var categoryId = conn.ExecuteScalar<int>(sql, parameter1);
@@ -261,15 +261,15 @@ namespace LMS_API.DataAccess
             return deleted;
         }
 
-        public void CreateCategory(BookCategory bookCategory)
+        public void CreateCategory(Category category)
         {
             using var connection = new SqlConnection(DbConnection);
             var parameter = new
             {
-                cat = bookCategory.Category,
-                subcat = bookCategory.SubCategory
+                cat = category.Name,
+                userid = category.UserID
             };
-            connection.Execute("insert into BookCategories (category, subcategory) values (@cat, @subcat);", parameter);
+            connection.Execute("insert into Categories ([CategoryName],[IsActive],[IsDeleted],[AddedBy],[AddedOn],[UpdatedBy],[UpdatedOn]) values (@cat,1,0, @userid,GETDATE(),@userid,GETDATE());", parameter);
         }
     }
 }
